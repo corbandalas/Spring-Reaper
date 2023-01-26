@@ -76,7 +76,7 @@ class TransactionControllerIntegrationTest extends BaseControllerTest{
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").isString())
                 .andExpect(jsonPath("$.code").value("500"))
-                .andExpect(jsonPath("$.message").value("Not enough money"));;
+                .andExpect(jsonPath("$.message").value("Not enough money"));
     }
 
 
@@ -102,6 +102,8 @@ class TransactionControllerIntegrationTest extends BaseControllerTest{
                 .andExpect(jsonPath("transactionDTO.accountBalanceFrom").value("289"))
                 .andExpect(jsonPath("transactionDTO.accountBalanceTo").value("10"));
     }
+
+
 
 
 }
