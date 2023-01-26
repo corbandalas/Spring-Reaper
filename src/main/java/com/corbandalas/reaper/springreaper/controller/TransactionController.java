@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/transaction")
 @AllArgsConstructor
@@ -27,5 +29,10 @@ public class TransactionController {
     @PostMapping("/transfer")
     public ResponseEntity<TxResponse> createTransfer(@RequestBody TransferTransactionRequest transactionRequest) {
         return ResponseEntity.ok(new TxResponse(transactionService.createTransferTransaction(transactionRequest), "0", "Success"));
+    }
+
+    @GetMapping("/tx/account/{accountId}")
+    public ResponseEntity<List<TxDTO>> getTxListByAccount(@PathVariable Long accountId) {
+        return ResponseEntity.ok(transactionService.getTransactionListByAccount(accountId));
     }
 }
