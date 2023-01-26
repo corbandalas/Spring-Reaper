@@ -25,7 +25,7 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TxResponse> createTransfer(@RequestBody WithdrawTransactionRequest transactionRequest) {
-        return ResponseEntity.ok(new TxResponse(transactionService.createWithdrawTransaction(transactionRequest), "0", "Success"));
+    public ResponseEntity<TxResponse> createTransfer(@RequestBody TransferTransactionRequest transactionRequest) {
+        return ResponseEntity.ok(new TxResponse(transactionService.createTransferTransaction(transactionRequest), "0", "Success"));
     }
 }
