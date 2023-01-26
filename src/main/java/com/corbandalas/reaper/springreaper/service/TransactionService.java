@@ -1,10 +1,7 @@
 package com.corbandalas.reaper.springreaper.service;
 
 import com.corbandalas.reaper.springreaper.SelfAutowired;
-import com.corbandalas.reaper.springreaper.dto.DepositTransactionRequest;
-import com.corbandalas.reaper.springreaper.dto.TransactionDTO;
-import com.corbandalas.reaper.springreaper.dto.TransferTransactionRequest;
-import com.corbandalas.reaper.springreaper.dto.WithdrawTransactionRequest;
+import com.corbandalas.reaper.springreaper.dto.*;
 import com.corbandalas.reaper.springreaper.entities.Transaction;
 import com.corbandalas.reaper.springreaper.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -97,4 +95,15 @@ public class TransactionService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<TxDTO> getTransactionListByAccount(Long accountId) {
+
+        var account = accountService.getAccountNoneLocked(accountId).orElseThrow();
+
+        return transactionRepository
+                .findByFromOrTo(account).stream()
+                .map(t -> new TxDTO(t.getId(),
+                        t.getAmount(), t.getCurrency(), LocalDateTime.now(), t.getFrom() != null ? t.getFrom().getId(): null, t.getTo() != null ? t.getTo().getId(): null))
+                .toList();
+    }
 }
