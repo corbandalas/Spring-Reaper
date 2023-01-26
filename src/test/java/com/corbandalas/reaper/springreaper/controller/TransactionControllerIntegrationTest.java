@@ -9,7 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -101,6 +105,16 @@ class TransactionControllerIntegrationTest extends BaseControllerTest{
                 .andExpect(jsonPath("transactionDTO.transactionID").isNumber())
                 .andExpect(jsonPath("transactionDTO.accountBalanceFrom").value("289"))
                 .andExpect(jsonPath("transactionDTO.accountBalanceTo").value("10"));
+    }
+
+    @Test
+    @SneakyThrows
+    @Sql("/scripts/insert_transactions.sql")
+    @Tag("integration")
+    void testGetTxListByAccount() {
+
+        this.mockMvc.perform(get("/transaction/account/100")).andDo(print())
+                .andExpect(status().isOk());
     }
 
 
