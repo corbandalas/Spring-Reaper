@@ -31,7 +31,7 @@ public class TransactionController {
         return ResponseEntity.ok(new TxResponse(transactionService.createTransferTransaction(transactionRequest), "0", "Success"));
     }
 
-    @GetMapping("/tx/account/{accountId}")
+    @GetMapping("/account/{accountId}")
     public ResponseEntity<List<TxDTO>> getTxListByAccount(@PathVariable Long accountId) {
         return ResponseEntity.ok(transactionService.getTransactionListByAccount(accountId));
     }

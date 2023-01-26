@@ -84,7 +84,7 @@ class TransactionServiceTest extends BaseServiceTest{
     void testCreateWithdrawTransactionFailedNotEnoughMoney() {
 
         assertThrows(IllegalArgumentException.class, () -> {
-            transactionService.createWithdrawTransaction(new WithdrawTransactionRequest(100L, "USD", accountFromID))
+            transactionService.createWithdrawTransaction(new WithdrawTransactionRequest(100L, "USD", accountFromID));
         });
     }
 
