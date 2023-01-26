@@ -1,9 +1,6 @@
 package com.corbandalas.reaper.springreaper.service;
 
-import com.corbandalas.reaper.springreaper.dto.DepositTransactionRequest;
-import com.corbandalas.reaper.springreaper.dto.TransactionDTO;
-import com.corbandalas.reaper.springreaper.dto.TransferTransactionRequest;
-import com.corbandalas.reaper.springreaper.dto.WithdrawTransactionRequest;
+import com.corbandalas.reaper.springreaper.dto.*;
 import com.corbandalas.reaper.springreaper.repository.PostgreSQLExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -86,7 +84,7 @@ class TransactionServiceTest extends BaseServiceTest{
     void testCreateWithdrawTransactionFailedNotEnoughMoney() {
 
         assertThrows(IllegalArgumentException.class, () -> {
-            transactionService.createWithdrawTransaction(new WithdrawTransactionRequest(100L, "USD", accountFromID));
+            transactionService.createWithdrawTransaction(new WithdrawTransactionRequest(100L, "USD", accountFromID))
         });
     }
 
@@ -145,9 +143,7 @@ class TransactionServiceTest extends BaseServiceTest{
         assertThat(accountBalance).isEqualTo(0L);
 
 
-        assertThrows(Exception.class, () -> {
-            transactionService.createTransferTransaction(new TransferTransactionRequest(150L, "USD", accountFromID, accountToID));
-                });
+        assertThrows(Exception.class, () -> transactionService.createTransferTransaction(new TransferTransactionRequest(150L, "USD", accountFromID, accountToID)));
 
 
 
@@ -208,11 +204,19 @@ class TransactionServiceTest extends BaseServiceTest{
 
         });
 
-
-
-
         Long accountBalance = accountRepository.getAccountBalance(accountToID);
         assertThat(accountBalance).isGreaterThanOrEqualTo(0L);
+    }
+
+
+    @Test
+    @Transactional
+    @Sql("/scripts/insert_transactions.sql")
+    void testTransactionHistoryList() {
+        List<TxDTO> transactionListByAccount = transactionService.getTransactionListByAccount(100L);
+
+        assertThat(transactionListByAccount).isNotNull();
+        assertThat(transactionListByAccount.size()).isEqualTo(3);
     }
 
     @AfterEach
