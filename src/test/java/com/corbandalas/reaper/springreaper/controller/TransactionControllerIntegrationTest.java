@@ -1,6 +1,7 @@
 package com.corbandalas.reaper.springreaper.controller;
 
 import com.corbandalas.reaper.springreaper.dto.DepositTransactionRequest;
+import com.corbandalas.reaper.springreaper.dto.TransferTransactionRequest;
 import com.corbandalas.reaper.springreaper.dto.WithdrawTransactionRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Tag;
@@ -76,6 +77,30 @@ class TransactionControllerIntegrationTest extends BaseControllerTest{
                 .andExpect(jsonPath("$.code").isString())
                 .andExpect(jsonPath("$.code").value("500"))
                 .andExpect(jsonPath("$.message").value("Not enough money"));;
+    }
+
+
+    @Test
+    @SneakyThrows
+    @Sql("/scripts/insert_transactions.sql")
+    @Tag("integration")
+    void testTransferSuccess() {
+
+        TransferTransactionRequest transferTransactionRequest
+                = new TransferTransactionRequest(
+                10L, "USD", 100L, 101L);
+
+        mockMvc.perform(
+                        post("/transaction/transfer")
+                                .content(objectMapper.writeValueAsString(transferTransactionRequest))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").isString())
+                .andExpect(jsonPath("$.code").value("0"))
+                .andExpect(jsonPath("transactionDTO.transactionID").isNumber())
+                .andExpect(jsonPath("transactionDTO.accountBalanceFrom").value("289"))
+                .andExpect(jsonPath("transactionDTO.accountBalanceTo").value("10"));
     }
 
 
